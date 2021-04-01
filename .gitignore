@@ -13,3 +13,4 @@ csharp/*.suo
 csharp/.vs
 .vs
 .phpunit.result.cache
+javascript-jest/node_modules/

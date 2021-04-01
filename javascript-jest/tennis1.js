@@ -1,53 +1,49 @@
-'use strict';
+"use strict";
 
-function getScore(m_score1, m_score2) {
-    var score = "";
-    var tempScore = 0;
-    if (m_score1 === m_score2) {
-        switch (m_score1) {
-            case 0:
-                score = "Love-All";
-                break;
-            case 1:
-                score = "Fifteen-All";
-                break;
-            case 2:
-                score = "Thirty-All";
-                break;
-            default:
-                score = "Deuce";
-                break;
-        }
-    } else if (m_score1 >= 4 || m_score2 >= 4) {
-        var minusResult = m_score1 - m_score2;
-        if (minusResult === 1) {score = "Advantage player1";}
-        else if (minusResult === -1) {score = "Advantage player2";}
-        else if (minusResult >= 2) {score = "Win for player1";}
-        else {score = "Win for player2";}
+const SCORE_MAP = {
+  0: "Love",
+  1: "Fifteen",
+  2: "Thirty",
+  3: "Forty",
+};
+
+function convertDrawScoreToString(score) {
+  if (score >= 3) {
+    return "Deuce";
+  } else {
+    return `${SCORE_MAP[score]}-All`;
+  }
+}
+
+function convertAdvantageScoreToString(score1, score2) {
+  return score1 > score2 ? "Advantage player1" : "Advantage player2";
+}
+
+function convertWinScoreToString(score1, score2) {
+  return score1 > score2 ? "Win for player1" : "Win for player2";
+}
+
+function convertNormalScoreToString(score1, score2) {
+  return `${SCORE_MAP[score1]}-${SCORE_MAP[score2]}`;
+}
+
+function getScore(score1, score2) {
+  if (score1 === score2) {
+    // draw case
+    return convertDrawScoreToString(score1);
+  } else if (score1 >= 4 || score2 >= 4) {
+    // win or advantage case
+    if (Math.abs(score1 - score2) >= 2) {
+      // win case
+      return convertWinScoreToString(score1, score2);
     } else {
-        for (var i = 1; i < 3; i++) {
-            if (i === 1) {tempScore = m_score1;}
-            else {
-                score += "-";
-                tempScore = m_score2;
-            }
-            switch (tempScore) {
-                case 0:
-                    score += "Love";
-                    break;
-                case 1:
-                    score += "Fifteen";
-                    break;
-                case 2:
-                    score += "Thirty";
-                    break;
-                case 3:
-                    score += "Forty";
-                    break;
-            }
-        }
+      // advantage case
+      return convertAdvantageScoreToString(score1, score2);
     }
-    return score;
+  } else {
+    // normal gameplay
+    return convertNormalScoreToString(score1, score2);
+  }
 }
 
 module.exports = getScore;

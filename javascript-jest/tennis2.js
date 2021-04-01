@@ -1,102 +1,49 @@
-'use strict';
+"use strict";
 
-function getScore(P1point, P2point) {
-    var score = "";
+const SCORE_MAP = {
+  0: "Love",
+  1: "Fifteen",
+  2: "Thirty",
+  3: "Forty",
+};
 
-    if (P1point === P2point && P1point < 3) {
-        if (P1point === 0) {
-            score = "Love";
-        }
-        if (P1point === 1) {
-            score = "Fifteen";
-        }
-        if (P1point === 2) {
-            score = "Thirty";
-        }
-        score += "-All";
-    }
-    if (P1point === P2point && P1point > 2) {
-        score = "Deuce";
-    }
-
-    var P1res;
-    var P2res;
-    if (P1point > 0 && P2point === 0) {
-        if (P1point === 1) {
-            P1res = "Fifteen";
-        }
-        if (P1point === 2) {
-            P1res = "Thirty";
-        }
-        if (P1point === 3) {
-            P1res = "Forty";
-        }
-
-        P2res = "Love";
-        score = P1res + "-" + P2res;
-    }
-    if (P2point > 0 && P1point === 0) {
-        if (P2point === 1) {
-            P2res = "Fifteen";
-        }
-        if (P2point === 2) {
-            P2res = "Thirty";
-        }
-        if (P2point === 3) {
-            P2res = "Forty";
-        }
-
-        P1res = "Love";
-        score = P1res + "-" + P2res;
-    }
-
-    if (P1point > P2point && P1point < 4) {
-        if (P1point === 2) {
-            P1res = "Thirty";
-        }
-        if (P1point === 3) {
-            P1res = "Forty";
-        }
-        if (P2point === 1) {
-            P2res = "Fifteen";
-        }
-        if (P2point === 2) {
-            P2res = "Thirty";
-        }
-        score = P1res + "-" + P2res;
-    }
-    if (P2point > P1point && P2point < 4) {
-        if (P2point === 2) {
-            P2res = "Thirty";
-        }
-        if (P2point === 3) {
-            P2res = "Forty";
-        }
-        if (P1point === 1) {
-            P1res = "Fifteen";
-        }
-        if (P1point === 2) {
-            P1res = "Thirty";
-        }
-        score = P1res + "-" + P2res;
-    }
-
-    if (P1point > P2point && P2point >= 3) {
-        score = "Advantage player1";
-    }
-
-    if (P2point > P1point && P1point >= 3) {
-        score = "Advantage player2";
-    }
-
-    if (P1point >= 4 && P2point >= 0 && (P1point - P2point) >= 2) {
-        score = "Win for player1";
-    }
-    if (P2point >= 4 && P1point >= 0 && (P2point - P1point) >= 2) {
-        score = "Win for player2";
-    }
-    return score;
+function convertDrawScoreToString(score) {
+  if (score >= 3) return "Deuce";
+  return `${SCORE_MAP[score]}-All`;
 }
 
+function convertNormalScoreToString(score1, score2) {
+  return `${SCORE_MAP[score1]}-${SCORE_MAP[score2]}`;
+}
+
+function convertAdvantageScoreToString(score1, score2) {
+  return score1 > score2 ? "Advantage player1" : "Advantage player2";
+}
+
+function convertWinScoreToString(score1, score2) {
+  return score1 > score2 ? "Win for player1" : "Win for player2";
+}
+
+function getScore(score1, score2) {
+  // draw
+  if (score1 === score2) {
+    return convertDrawScoreToString(score1);
+  }
+
+  // normal gameplay
+  if (score1 < 4 && score2 < 4) {
+    return convertNormalScoreToString(score1, score2);
+  }
+
+  const scoreDifference = Math.abs(score1 - score2);
+
+  if (scoreDifference === 1) {
+    // advantage case
+    return convertAdvantageScoreToString(score1, score2);
+  } else {
+    // win case
+    return convertWinScoreToString(score1, score2);
+  }
+}
 
 module.exports = getScore;

@@ -1,22 +1,32 @@
-'use strict';
+"use strict";
 
-function getScore(p1, p2) {
-    var s;
-    let p1N = "player1";
-    let p2N = "player2";
-    if ((p1 < 4 && p2 < 4) && (p1 + p2 < 6)) {
-        var p = ["Love", "Fifteen", "Thirty", "Forty"];
-        s = p[p1];
-        return (p1 === p2) ? s + "-All" : s + "-" + p[p2];
-    } else {
-        if (p1 === p2) {
-            return "Deuce";
-        }
-        s = p1 > p2 ? p1N : p2N;
-        return ((p1 - p2) * (p1 - p2) === 1) ? "Advantage " + s : "Win for " + s;
-    }
+function formatNormalGameScore(player1Score, player2Score) {
+  var scoreMap = ["Love", "Fifteen", "Thirty", "Forty"];
+  return player1Score === player2Score
+    ? scoreMap[player1Score] + "-All"
+    : scoreMap[player1Score] + "-" + scoreMap[player2Score];
 }
 
+function formatLateGameScore(player1Score, player2Score) {
+  let player1Name = "player1";
+  let player2Name = "player2";
+  if (player1Score === player2Score) {
+    return "Deuce";
+  }
+  const leader = player1Score > player2Score ? player1Name : player2Name;
+  return Math.abs(player1Score - player2Score) === 1
+    ? "Advantage " + leader
+    : "Win for " + leader;
+}
+
+function getScore(player1Score, player2Score) {
+  if (player1Score < 4 && player2Score < 4 && player1Score + player2Score < 6) {
+    // normal game
+    return formatNormalGameScore(player1Score, player2Score);
+  } else {
+    // deuce, advantage or win
+    return formatLateGameScore(player1Score, player2Score);
+  }
+}
 
 module.exports = getScore;
-
